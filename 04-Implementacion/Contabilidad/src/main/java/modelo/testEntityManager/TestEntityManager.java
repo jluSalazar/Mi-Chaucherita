@@ -12,10 +12,10 @@ public class TestEntityManager {
 	public static void main(String[] args) {
 		EntityManager em = Persistence.createEntityManagerFactory("ContabilidadMySQL").createEntityManager();
 		
-		/*Cuenta cuenta = new Cuenta();
+		Cuenta cuenta = new Cuenta();
 		cuenta.setName("Bolsillito");
 		cuenta.setTotal(300);
-		
+		/*
 		em.getTransaction().begin();
 		em.persist(cuenta); //insertarCuenta
 		em.getTransaction().commit();

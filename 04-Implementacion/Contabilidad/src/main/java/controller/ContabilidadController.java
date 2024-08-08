@@ -345,11 +345,11 @@ public class ContabilidadController extends HttpServlet {
 
 	private void deleteMovement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 0. Instanciar los DAOs
-				IngresoDAO ingresoDAO = new IngresoDAO();
-				EgresoDAO egresoDAO = new EgresoDAO();
-				TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
-				MovimientoDAO movimientoDAO = new MovimientoDAO();
-				
+		IngresoDAO ingresoDAO = new IngresoDAO();
+		EgresoDAO egresoDAO = new EgresoDAO();
+		TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
+		MovimientoDAO movimientoDAO = new MovimientoDAO();
+
 		// 1. Obtener los parametros
 		int movementID = Integer.parseInt(req.getParameter("movementID"));
 
@@ -390,11 +390,11 @@ public class ContabilidadController extends HttpServlet {
 
 	private void showCategories(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 0. Instanciar los DAOs
-				CategoriaDAO categoriaDAO = new CategoriaDAO();
-				IngresoDAO ingresoDAO = new IngresoDAO();
-				EgresoDAO egresoDAO = new EgresoDAO();
-				TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
-				MovimientoDAO movimientoDAO = new MovimientoDAO();
+		CategoriaDAO categoriaDAO = new CategoriaDAO();
+		IngresoDAO ingresoDAO = new IngresoDAO();
+		EgresoDAO egresoDAO = new EgresoDAO();
+		TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
+		MovimientoDAO movimientoDAO = new MovimientoDAO();
 
 		// 1. Obtener los parametros
 		int categoryID = Integer.parseInt(req.getParameter("categoryID"));
@@ -431,8 +431,8 @@ public class ContabilidadController extends HttpServlet {
 
 	private void showIncomeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 0. Instanciar los DAOs
-				CuentaDAO cuentaDAO = new CuentaDAO();
-				CategoriaIngresoDAO categoriaIngresoDAO = new CategoriaIngresoDAO();
+		CuentaDAO cuentaDAO = new CuentaDAO();
+		CategoriaIngresoDAO categoriaIngresoDAO = new CategoriaIngresoDAO();
 
 		// 1. Obtener los parametros
 		int accountID = Integer.parseInt(req.getParameter("accountID"));
@@ -459,9 +459,9 @@ public class ContabilidadController extends HttpServlet {
 
 	private void newIncome(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 0. Instanciar los DAOs
-				CuentaDAO cuentaDAO = new CuentaDAO();
-				CategoriaIngresoDAO categoriaIngresoDAO = new CategoriaIngresoDAO();
-				IngresoDAO ingresoDAO = new IngresoDAO();
+		CuentaDAO cuentaDAO = new CuentaDAO();
+		CategoriaIngresoDAO categoriaIngresoDAO = new CategoriaIngresoDAO();
+		IngresoDAO ingresoDAO = new IngresoDAO();
 
 		// 1. Obtener los parametros
 		String description = req.getParameter("movementDescription");
@@ -489,19 +489,20 @@ public class ContabilidadController extends HttpServlet {
 		newIncome.setCategory(category);
 
 		ingresoDAO.newIncome(newIncome);
-		
-		destination.setTotal(destination.getTotal()+newIncome.getValue());
-		
+
+		destination.setTotal(destination.getTotal() + newIncome.getValue());
+
 		cuentaDAO.update(destination);
 		// 3. Llamar a la vista
 		resp.sendRedirect("ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
 
 	}
 
-	private void showExpenseForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	private void showExpenseForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		// 0. Instanciar los DAOs
-				CuentaDAO cuentaDAO = new CuentaDAO();
-				CategoriaEgresoDAO categoriaEgresoDAO = new CategoriaEgresoDAO();
+		CuentaDAO cuentaDAO = new CuentaDAO();
+		CategoriaEgresoDAO categoriaEgresoDAO = new CategoriaEgresoDAO();
 
 		// 1. Obtener los parametros
 		int accountID = Integer.parseInt(req.getParameter("accountID"));
@@ -529,9 +530,9 @@ public class ContabilidadController extends HttpServlet {
 
 	private void newExpense(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// 0. Instanciar los DAOs
-				CuentaDAO cuentaDAO = new CuentaDAO();
-				CategoriaEgresoDAO categoriaEgresoDAO = new CategoriaEgresoDAO();
-				EgresoDAO egresoDAO = new EgresoDAO();
+		CuentaDAO cuentaDAO = new CuentaDAO();
+		CategoriaEgresoDAO categoriaEgresoDAO = new CategoriaEgresoDAO();
+		EgresoDAO egresoDAO = new EgresoDAO();
 
 		// 1. Obtener los parametros
 		String description = req.getParameter("movementDescription");
@@ -558,17 +559,24 @@ public class ContabilidadController extends HttpServlet {
 		newExpense.setSource(source);
 		newExpense.setCategory(category);
 
-		egresoDAO.newExpense(newExpense);
-		cuentaDAO.updateByID(newExpense);
+		source.setTotal(source.getTotal() - newExpense.getValue());
+		
+		if (source.getTotal() >= 0){
+			egresoDAO.newExpense(newExpense);
+			cuentaDAO.update(source);
+		}
+		System.out.println("Valor excede el dinero en la cuenta");
+
 		// 3. Llamar a la vista
 		resp.sendRedirect("ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
 
 	}
 
-	private void showTransferForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	private void showTransferForm(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		// 0. Instanciar los DAOs
-				CuentaDAO cuentaDAO = new CuentaDAO();
-				CategoriaTransferenciaDAO categoriaTransferenciaDAO = new CategoriaTransferenciaDAO();
+		CuentaDAO cuentaDAO = new CuentaDAO();
+		CategoriaTransferenciaDAO categoriaTransferenciaDAO = new CategoriaTransferenciaDAO();
 
 		// 1. Obtener los parametros
 		int accountID = Integer.parseInt(req.getParameter("accountID"));
@@ -626,9 +634,21 @@ public class ContabilidadController extends HttpServlet {
 		newTransfer.setSource(source);
 		newTransfer.setDestination(destination);
 		newTransfer.setCategory(category);
+		
 		if (newTransfer.getSource() != newTransfer.getDestination()) {
-			transferenciaDAO.newTransfer(newTransfer);
+			
+			destination.setTotal(destination.getTotal() + newTransfer.getValue());
+			source.setTotal(source.getTotal() - newTransfer.getValue());
+			
+			if (source.getTotal() >= 0){
+				transferenciaDAO.newTransfer(newTransfer);
+				
+				cuentaDAO.update(source);
+			}
+			System.out.println("Valor excede el dinero en la cuenta");
 		}
+		System.out.println("No puedes transferir dinero a la misma cuenta");
+
 
 		// 3. Llamar a la vista
 		resp.sendRedirect("ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
