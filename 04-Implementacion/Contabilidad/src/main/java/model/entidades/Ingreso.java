@@ -3,11 +3,22 @@ package model.entidades;
 import java.io.Serializable;
 import java.util.List;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "Ingreso")
 public class Ingreso extends Movimiento implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@ManyToOne
+    @JoinColumn(name = "destination_id")
 	private Cuenta destination;
+	@ManyToOne
+    @JoinColumn(name = "category_id")
 	private CategoriaIngreso category;
 
 	private List<Ingreso> incomeMovements;
