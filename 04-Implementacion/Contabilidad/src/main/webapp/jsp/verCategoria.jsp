@@ -13,16 +13,20 @@
 <body>
 	<header class="bg-blue">
 		<i class="fa-solid fa-coins fa-2x"></i>
-		<h1><a href="ContabilidadController?ruta=showDashboard&from=${from.toString()}&to=${to.toString()}">Mi Chaucherita</a></h1>
+		<h1>
+			<a
+				href="ContabilidadController?ruta=showDashboard&from=${from.toString()}&to=${to.toString()}">Mi
+				Chaucherita</a>
+		</h1>
 		<!-- Formulario para seleccionar fechas -->
 		<div class="date-selection">
 			<form action="ContabilidadController" method="get">
-				<input type="hidden" name="ruta" value="showCategories" />
-				<input type="hidden" name="categoryID" value="${category.id}" />
-				<label for="from">Desde:</label> 
-				<input type="date" id="from" name="from" value="${from.toString()}" required> 
-				<label for="to">Hasta:</label> 
-				<input type="date" id="to" name="to" value="${to.toString()}" required>
+				<input type="hidden" name="ruta" value="showCategories" /> <input
+					type="hidden" name="categoryID" value="${category.id}" /> <label
+					for="from">Desde:</label> <input type="date" id="from" name="from"
+					value="${from.toString()}" required> <label for="to">Hasta:</label>
+				<input type="date" id="to" name="to" value="${to.toString()}"
+					required>
 
 				<button type="submit">Filtrar</button>
 			</form>
@@ -34,8 +38,7 @@
 			<!-- Información de la Cuenta -->
 			<div class="account-info">
 				<h2>Detalles de la Categoria</h2>
-				<br>
-				<br>
+				<br> <br>
 				<p>
 					<strong>ID:</strong> ${category.id}
 				</p>
@@ -63,6 +66,7 @@
 							<th>Fecha</th>
 							<th>Hora</th>
 							<th>Categoria</th>
+							<th>Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -76,6 +80,11 @@
 								<td>${movement.date}</td>
 								<td>${movement.hour}</td>
 								<td>${movement.category.getName()}</td>
+								<td><a
+									href="ContabilidadController?ruta=showUpdateForm&movementID=${movement.id}&from=${from.toString()}&to=${to.toString()}">Actualizar</a>
+									<br> <a
+									href="ContabilidadController?ruta=deleteMovement&movementID=${movement.id}&from=${from.toString()}&to=${to.toString()}">Eliminar</a>
+								</td>
 							</tr>
 						</c:forEach>
 

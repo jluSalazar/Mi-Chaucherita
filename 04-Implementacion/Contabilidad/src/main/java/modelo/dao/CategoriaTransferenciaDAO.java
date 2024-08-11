@@ -1,32 +1,26 @@
 package modelo.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Query;
 import model.entidades.CategoriaTransferencia;
 
 public class CategoriaTransferenciaDAO {
-	// **************** Metodos de Negocio *************//
-	public List<CategoriaTransferencia> getAll() {
-		CategoriaTransferencia categoriaTransferencia = new CategoriaTransferencia();
-		List<CategoriaTransferencia> transferCategories = categoriaTransferencia.getTransferCategories();
-		if (transferCategories == null) {
-			transferCategories = new ArrayList<>();
-			CategoriaTransferencia cat1 = new CategoriaTransferencia();
-			cat1.setId(11);
-			cat1.setName("Transferencia Entre Cuentas");
+	private EntityManager em;
 
-			transferCategories.add(cat1);
-		}
-		return transferCategories;
+	public CategoriaTransferenciaDAO() {
+		this.em = Persistence.createEntityManagerFactory("ContabilidadMySQL").createEntityManager();
+	}
+
+	public List<CategoriaTransferencia> getAll() {
+		String sentenciJPQL = "SELECT c FROM Categoria c WHERE TYPE(c) = CategoriaTransferencia";
+        Query query = this.em.createQuery(sentenciJPQL);
+        return (List<CategoriaTransferencia>)query.getResultList();
 	}
 
 	public CategoriaTransferencia getByID(int categoryID) {
-		for (CategoriaTransferencia categoria : getAll()) {
-			if (categoria.getId() == categoryID) {
-				return categoria;
-			}
-		}
-		return null;
+		return em.find(CategoriaTransferencia.class, categoryID);
 	}
 }

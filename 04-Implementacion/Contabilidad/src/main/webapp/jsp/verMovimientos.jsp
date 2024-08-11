@@ -54,9 +54,9 @@
 							<td>${movement.date}</td>
 							<td>${movement.hour}</td>
 							<td>${movement.category.getName()}</td>
-							<td><a href="ContabilidadController?ruta=showUpdateForm&movementID=${movement.id}">Actualizar</a>
+							<td><a href="ContabilidadController?ruta=showUpdateForm&movementID=${movement.id}&from=${from.toString()}&to=${to.toString()}">Actualizar</a>
 								<br> 
-								<a href="ContabilidadController?ruta=deleteMovement&movementID=${movement.id}">Eliminar</a>
+								<a href="ContabilidadController?ruta=deleteMovement&movementID=${movement.id}&from=${from.toString()}&to=${to.toString()}">Eliminar</a>
 							</td>
 						</tr>
 					</c:forEach>

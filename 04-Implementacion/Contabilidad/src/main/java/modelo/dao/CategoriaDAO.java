@@ -4,33 +4,33 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Query;
 import model.entidades.Categoria;
 import model.entidades.CategoriaTotalDTO;
+import model.entidades.Cuenta;
 import model.entidades.Movimiento;
 
 public class CategoriaDAO {
 	
+	private EntityManager em;
+
+	public CategoriaDAO() {
+		this.em = Persistence.createEntityManagerFactory("ContabilidadMySQL").createEntityManager();
+	}
+	
 	public List<? extends Categoria> getAll() {
-		Categoria categoria = new Categoria();
-		CategoriaIngresoDAO categoriaIngresoDAO = new CategoriaIngresoDAO();
-		CategoriaEgresoDAO categoriaEgresoDAO = new CategoriaEgresoDAO();
-		List<Categoria> categories = categoria.getCategories();
-		if (categories == null) {
-			categories = new ArrayList<Categoria>();
-			categories.addAll(categoriaIngresoDAO.getAll());
-			categories.addAll(categoriaEgresoDAO.getAll());
-		}
+		
+		String sentenciJPQL = "SELECT c FROM Categoria c";
+		Query query = this.em.createQuery(sentenciJPQL);
+		List<Categoria> categories = (List<Categoria>)query.getResultList();
 
 		return categories;
 	}
 
 	public Categoria getByID(int categoryID) {
-		for (Categoria categoria : getAll()) {
-			if (categoria.getId() == categoryID) {
-				return categoria;
-			}
-		}
-		return null;
+		return em.find(Categoria.class, categoryID);
 	}
 
 	public List<CategoriaTotalDTO> getAllSummarized(LocalDate from, LocalDate to) {
@@ -58,14 +58,12 @@ public class CategoriaDAO {
 			categoriasTotal.add(categoriaAux);
 		}
 
-		System.out.println("Categorías totales: " + categoriasTotal.toString());
 		return categoriasTotal;
 	}
+	
 
-	public CategoriaTotalDTO getSummarizedByID(int categoryID) {
-		for (CategoriaTotalDTO category : this.getAllSummarized(
-				LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth().getValue() - 1, 1),
-				LocalDate.now())) {
+	public CategoriaTotalDTO getSummarizedByID(int categoryID, LocalDate from, LocalDate to) {
+		for (CategoriaTotalDTO category : getAllSummarized(from,to)) {
 			if (category.getId() == categoryID) {
 				return category;
 			}
@@ -73,7 +71,6 @@ public class CategoriaDAO {
 		return null;
 	}
 	
-	//Metodos que no estan en el diseño
 	protected double getTotal(List<? extends Movimiento> movements) {
 		double total = 0;
 		for (Movimiento movement : movements) {

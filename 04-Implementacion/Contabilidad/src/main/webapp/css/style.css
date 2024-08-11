@@ -1,70 +1,70 @@
 @charset "UTF-8";
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    /*border: 1px solid red;*/
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	/*border: 1px solid red;*/
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-main{
-    padding: 20px;
+main {
+	padding: 20px;
 }
 
 h1 {
-    font-size: 2.5rem;
-    font-weight: 500;
-    line-height: 2.5rem;
-    text-wrap: nowrap;
-    text-decoration: none;
+	font-size: 2.5rem;
+	font-weight: 500;
+	line-height: 2.5rem;
+	text-wrap: nowrap;
+	text-decoration: none;
 }
 
 a {
 	text-decoration: none;
 }
 
-h2{
-    font-size: 2rem;
-    font-weight: 400;
-    padding: 10px 20px;
-    border-bottom: #084d6e 1px solid;
-    text-wrap: nowrap;
+h2 {
+	font-size: 2rem;
+	font-weight: 400;
+	padding: 10px 20px;
+	border-bottom: #084d6e 1px solid;
+	text-wrap: nowrap;
 }
 
-h3{
-    font-size: 1.5rem;
-    font-weight: 200;
-    text-wrap: nowrap;
+h3 {
+	font-size: 1.5rem;
+	font-weight: 200;
+	text-wrap: nowrap;
 }
 
-h4{
+h4 {
 	font-size: 1rem;
-    font-weight: 400;    
-    text-wrap: nowrap;
+	font-weight: 400;
+	text-wrap: nowrap;
 }
 
-h5{
+h5 {
 	font-size: 0.85rem;
-    font-weight: 200;    
-    text-wrap: nowrap;
+	font-weight: 200;
+	text-wrap: nowrap;
 }
 
 .bg-blue {
-    background-color: #084d6e;
+	background-color: #084d6e;
 }
 
 header {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 20px 10px;
-    text-wrap: nowrap;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	padding: 20px 10px;
+	text-wrap: nowrap;
 }
 
 header * {
-    margin: 5px;
-    color: #f2e9e9;
+	margin: 5px;
+	color: #f2e9e9;
 }
 
 .date-selection {
@@ -73,152 +73,162 @@ header * {
 }
 
 .date-selection input {
-    padding: 5px;
-    color: #000;
+	padding: 5px;
+	color: #000;
 }
 
-.date-selection button {
-    padding: 5px 10px;
-    background-color: #0056b3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.date-selection button, .error-button {
+	padding: 5px 10px;
+	background-color: #0056b3;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
 }
 
-.date-selection button:hover {
-    background-color: #004494;
+.date-selection button:hover, .error-button {
+	background-color: #004494;
 }
 
-.dashboard{
-    display: flex;
-}
-.accounts,.categories,.movements{
-    margin: 0 20px 0 20px;
-}
-.accounts .card-container{
-    display: flex;
-    flex-direction: column;
+.dashboard {
+	display: flex;
 }
 
-.dashboard .cat-mov{
-    display: flex;
-    flex-direction: column;
-    border-left: #084d6e solid 5px;
+.accounts, .categories, .movements {
+	margin: 0 20px 0 20px;
 }
 
-.categories .card-container{
-    display: flex;
-    flex-wrap: wrap;
+.accounts .card-container {
+	display: flex;
+	flex-direction: column;
 }
 
-.accounts .card, .categories .card{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    margin: 20px;
-    gap: 1rem;
-    background-color: #f2e9e9;
-    border: #084d6e solid 2px;
+.dashboard .cat-mov {
+	display: flex;
+	flex-direction: column;
+	border-left: #084d6e solid 5px;
 }
 
-.card-details{
+.categories .card-container {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.accounts .card, .categories .card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	margin: 20px;
+	gap: 1rem;
+	background-color: #f2e9e9;
+	border: #084d6e solid 2px;
+}
+
+.card-details {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-    justify-content: center;
-    gap: 2rem;
+	justify-content: center;
+	gap: 2rem;
 }
 
-button{
-    text-wrap: nowrap;
-    padding: 0.3rem;
+button {
+	text-wrap: nowrap;
+	padding: 0.3rem;
 }
 /* Estilo general de la tabla */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
 }
 
 /* Encabezado de la tabla */
 thead {
-    background-color: #084d6e; /* Azul oscuro */
-    color: #f2e9e9; /* Rosado claro */
+	background-color: #084d6e; /* Azul oscuro */
+	color: #f2e9e9; /* Rosado claro */
 }
 
 th {
-    padding: 1rem;
-    text-align: left;
+	padding: 1rem;
+	text-align: left;
 }
 
 /* Filas de la tabla */
 tbody tr:nth-child(even) {
-    background-color: #f2e9e9; /* Rosado claro */
+	background-color: #f2e9e9; /* Rosado claro */
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #ffffff; /* Blanco */
+	background-color: #ffffff; /* Blanco */
 }
 
 td {
-    padding: 12px;
-    border: 1px solid #ddd; /* Borde gris claro para las celdas */
+	padding: 12px;
+	border: 1px solid #ddd; /* Borde gris claro para las celdas */
 }
 
 /* Fila de encabezado y celdas */
 thead th {
-    border: 1px solid #ddd; /* Borde gris claro para los encabezados */
+	border: 1px solid #ddd; /* Borde gris claro para los encabezados */
 }
 
 /* Bordes de la tabla */
 table, th, td {
-    border: 1px solid #084d6e; /* Azul oscuro para los bordes de la tabla */
+	border: 1px solid #084d6e;
+	/* Azul oscuro para los bordes de la tabla */
 }
 
 /* Hover para las filas */
 tbody tr:hover {
-    background-color: #dcdcdc; /* Gris claro para el hover */
+	background-color: #dcdcdc; /* Gris claro para el hover */
 }
 
 /* Cuenta */
-.account-details {
-    display: flex;
-    
+.account-details, .error-details {
+	display: flex;
 }
 
-.account-info, .account-movements{
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 0 20px 0 20px;
+.account-info, .account-movements, .error-details {
+	border: 1px solid #ddd;
+	padding: 10px;
+	margin: 0 20px 0 20px;
 }
 
 /*Income Form*/
-.main-form{
-    display: flex;
-    padding: 10px 100px;
+.main-form {
+	display: flex;
+	padding: 10px 100px;
 }
-.main-form form{
-    padding: 20px;
-    border: 1px solid #ddd;
+
+.main-form form {
+	padding: 20px;
+	border: 1px solid #ddd;
 	text-align: end;
 }
-.main-form form div  {
+
+.main-form form div {
 	display: flex;
 	flex-wrap: nowrap;
 	justify-content: end;
 	align-items: center;
 }
-.main-form form div *{
-    margin: 10px 10px 0;
-    padding: 0.3rem;
-    text-wrap: nowrap;
-    max-width: 50%;
-    font-size: 1rem;
+
+.main-form form div * {
+	margin: 10px 10px 0;
+	padding: 0.3rem;
+	text-wrap: nowrap;
+	max-width: 50%;
+	font-size: 1rem;
 }
 
-.main-form form button{
-    padding: 0.3rem 0.6rem;
+.main-form form button {
+	padding: 0.3rem 0.6rem;
+}
+
+.error-details {
+	justify-content: center;
+	align-items: center;
 }

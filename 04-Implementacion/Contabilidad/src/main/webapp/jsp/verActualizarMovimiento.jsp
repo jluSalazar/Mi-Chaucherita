@@ -29,27 +29,27 @@
 			<div>
 				<label for="movementDescription">Concepto:</label> <input
 					type="text" name="movementDescription" id="movementDescription"
-					value="${movement.description}">
+					value="${movement.description}" required>
 			</div>
 			<br>
 			<div>
-				<label for="movementValue">Monto:</label> <input type="text"
-					name="movementValue" id="movementValue" value="${movement.value}">
+				<label for="movementValue">Monto:</label> <input type="number"
+					name="movementValue" id="movementValue" value="${movement.value}" min="0" step="any" required>
 			</div>
 			<br> <br>
 			<div>
 				<label for="movementDate">Fecha:</label> <input type="date"
-					name="movementDate" id="movementDate" value="${movement.date}">
+					name="movementDate" id="movementDate" value="${movement.date}"required>
 			</div>
 			<br>
 			<div>
 				<label for="movementHour">Hora:</label> <input type="time"
-					name="movementHour" id="movementHour" value="${movement.hour}">
+					name="movementHour" id="movementHour" value="${movement.hour}"required>
 			</div>
 			<div>
 				<c:if test="${not empty movement.source}">
 					<label for="movementSource">Ct. de Origen:</label>
-					<select name="movementSource" id="movementSource">
+					<select name="movementSource" id="movementSource" required>
 						<c:forEach items="${accounts}" var="account">
 							<option value="${account.id}"
 								<c:if test="${account.name eq movement.source.name}">selected</c:if>>
@@ -63,7 +63,7 @@
 			<div>
 				<c:if test="${not empty movement.destination}">
 					<label for="movementDestination">Cuenta de Destino:</label>
-					<select name="movementDestination" id="movementDestination">
+					<select name="movementDestination" id="movementDestination" required>
 						<c:forEach items="${accounts}" var="account">
 							<option value="${account.id}"
 								<c:if test="${account.name eq movement.destination.name}">selected</c:if>>
@@ -76,7 +76,7 @@
 
 			<div>
 				<label for="movementCategory">Categoría:</label> <select
-					name="movementCategory" id="movementCategory">
+					name="movementCategory" id="movementCategory" required>
 					<c:forEach items="${categories}" var="category">
 						<option value="${category.id}"
 							<c:if test="${category.id == movement.category.id}">selected</c:if>>

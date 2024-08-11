@@ -4,53 +4,32 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Query;
 import model.entidades.CategoriaEgreso;
 import model.entidades.CategoriaTotalDTO;
 import model.entidades.Egreso;
+import model.entidades.Ingreso;
 
 public class CategoriaEgresoDAO{
 
+	private EntityManager em;
+
+	public CategoriaEgresoDAO() {
+		this.em = Persistence.createEntityManagerFactory("ContabilidadMySQL").createEntityManager();
+	}
+	
 	public List<CategoriaEgreso> getAll(){
-		CategoriaEgreso categoriasEgreso = new CategoriaEgreso();
-		List<CategoriaEgreso>  expenseCategories = categoriasEgreso.getExpenseCategories();
-		if(expenseCategories == null) {
-			expenseCategories = new ArrayList<>();
-			CategoriaEgreso cat1 = new CategoriaEgreso();
-			cat1.setId(1);
-			cat1.setName("Alimentación");
-            
-			CategoriaEgreso cat2 = new CategoriaEgreso();
-			cat2.setId(2);
-			cat2.setName("Transporte");
-			
-            CategoriaEgreso cat3 = new CategoriaEgreso();
-            cat3.setId(3);
-			cat3.setName("Entretenimiento");
-			
-            CategoriaEgreso cat4 = new CategoriaEgreso();
-            cat4.setId(4);
-			cat4.setName("Salud");
-			
-            CategoriaEgreso cat5 = new CategoriaEgreso();
-            cat5.setId(5);
-			cat5.setName("Educación");
-			
-            expenseCategories.add(cat1);
-            expenseCategories.add(cat2);
-            expenseCategories.add(cat3);
-            expenseCategories.add(cat4);
-            expenseCategories.add(cat5);
-		}
-		return expenseCategories;
+		
+		String sentenciJPQL = "SELECT c FROM Categoria c WHERE TYPE(c) = CategoriaEgreso";
+        Query query = this.em.createQuery(sentenciJPQL);
+        return (List<CategoriaEgreso>)query.getResultList();
+        
 	}
 	
 	public CategoriaEgreso getByID(int categoryID){
-		for (CategoriaEgreso category : getAll()) {
-            if (category.getId() == categoryID) {
-                return category;
-            }
-        }
-        return null;
+		return em.find(CategoriaEgreso.class, categoryID);
 	}
 	
 	public List<CategoriaTotalDTO> getAllSummarized(LocalDate from, LocalDate to){
@@ -62,11 +41,19 @@ public class CategoriaEgresoDAO{
 		
 		for (CategoriaEgreso category : getAll()) {
 			List<Egreso> movements = egresoDAO.getAllByCategory(category.getId());
-			categoriaAux = new CategoriaTotalDTO();
+			List<Egreso> filteredMovements = new ArrayList<>();
 			
+			for (Egreso movement : movements) {
+				LocalDate date = movement.getDate();
+				if (!date.isBefore(from) && !date.isAfter(to)) {
+					filteredMovements.add(movement);
+				}
+			}
+
+			categoriaAux = new CategoriaTotalDTO();
 			categoriaAux.setId(category.getId());
 			categoriaAux.setName(category.getName());
-			categoriaAux.setTotal(categoriaDAO.getTotal(movements));
+			categoriaAux.setTotal(categoriaDAO.getTotal(filteredMovements));
 			
 			categoriasTotal.add(categoriaAux);
 		}

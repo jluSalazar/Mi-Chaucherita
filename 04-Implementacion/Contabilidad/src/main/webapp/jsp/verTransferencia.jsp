@@ -24,26 +24,26 @@
 			<br>
 			<div>
 				<label for="movementDescription">Concepto:</label> <input
-					type="text" name="movementDescription" id="movementDescription">
+					type="text" name="movementDescription" id="movementDescription" required>
 			</div>
 			<br>
 			<div>
-				<label for="movementValue">Monto:</label> <input type="text"
-					name="movementValue" id="movementValue">
+				<label for="movementValue">Monto:</label> <input type="number"
+					name="movementValue" id="movementValue" min="0" step="any" required>
 			</div>
 			<br> <br>
 			<div>
 				<label for="movementDate">Fecha:</label> <input type="date"
-					name="movementDate" id="movementDate">
+					name="movementDate" id="movementDate" required>
 			</div>
 			<br>
 			<div>
 				<label for="movementHour">Hora:</label> <input type="time"
-					name="movementHour" id="movementHour">
+					name="movementHour" id="movementHour" required>
 			</div>
 			<div>
 				<label for="movementSource">Cuenta de Origen:</label> <select
-					name="movementSource" id="movementSource">
+					name="movementSource" id="movementSource" required>
 					<c:forEach items="${accounts}" var="accountIterator">
 						<option value="${accountIterator.id}"
 							<c:if test="${accountIterator.id eq account.id}">selected</c:if>>
@@ -53,7 +53,7 @@
 			</div>
 			<div>
 				<label for="movementDestination">Cuenta de Destino:</label> <select
-					name="movementDestination" id="movementDestination">
+					name="movementDestination" id="movementDestination" required>
 					<c:forEach items="${accounts}" var="accountIterator">
 						<option value="${accountIterator.id}"
 							<c:if test="${accountIterator.id eq account.id}">selected</c:if>>
@@ -64,7 +64,7 @@
 
 			<div>
 				<label for="movementCategory">Categoría:</label> <select
-					name="movementCategory" id="movementCategory">
+					name="movementCategory" id="movementCategory" required>
 					<c:forEach items="${categories}" var="category">
 						<option value="${category.id}">${category.name}</option>
 					</c:forEach>
