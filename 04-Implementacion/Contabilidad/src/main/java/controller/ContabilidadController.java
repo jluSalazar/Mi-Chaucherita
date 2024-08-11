@@ -162,8 +162,6 @@ public class ContabilidadController extends HttpServlet {
 
 		// 2. Hablar con los modelos
 		Cuenta account = cuentaDAO.getByID(accountID);
-		// List<Movimiento> movements = new
-		// ArrayList<Movimiento>(Movimiento.getAllByAccount(accountID));
 		List<Movimiento> movements = new ArrayList<>();
 		List<Ingreso> incomeMovements = ingresoDAO.getAllByAccount(accountID);
 		List<Egreso> expenseMovements = egresoDAO.getAllByAccount(accountID);
@@ -291,54 +289,85 @@ public class ContabilidadController extends HttpServlet {
 
 		// 2. Hablar con los modelos
 		boolean flag = false;
+		String errorMessage = "";
 		Movimiento movement = movimientoDAO.getByID(movementID);
 
 		if (movement instanceof Ingreso) {
 			Ingreso income = new Ingreso();
+			Cuenta destination = cuentaDAO.getByID(destinationID);
+
 			income.setId(movementID);
 			income.setDescription(newDescription);
 			income.setValue(newValue);
 			income.setDate(newDate);
 			income.setHour(newHour);
-			income.setDestination(cuentaDAO.getByID(destinationID));
+			income.setDestination(destination);
 			income.setCategory(categoriaIngresoDAO.getByID(categoryID));
 
-			flag = ingresoDAO.updateIncome(income);
+			destination.setTotal(destination.getTotal() + income.getValue() - movement.getValue());
+
+			flag = ingresoDAO.updateIncome(income) && cuentaDAO.update(destination);
+
 		} else if (movement instanceof Egreso) {
 			Egreso expense = new Egreso();
+			Cuenta source = cuentaDAO.getByID(sourceID);
+			
 			expense.setId(movementID);
 			expense.setDescription(newDescription);
-			expense.setValue(newValue);
 			expense.setDate(newDate);
 			expense.setHour(newHour);
-			expense.setSource(cuentaDAO.getByID(sourceID));
+			expense.setValue(newValue);
+			expense.setSource(source);
 			expense.setCategory(categoriaEgresoDAO.getByID(categoryID));
 
-			flag = egresoDAO.updateExpense(expense);
+			source.setTotal(source.getTotal() + movement.getValue() - expense.getValue());
+
+			if (source.getTotal() >= 0) {
+				
+				flag = egresoDAO.updateExpense(expense) && cuentaDAO.update(source);
+			}else {
+				errorMessage = "El VALOR EXCEDE el dinero que hay en la cuenta " + source.getName();
+			}
+
 		} else if (movement instanceof Transferencia) {
 			Transferencia transfer = new Transferencia();
+			Cuenta source = cuentaDAO.getByID(sourceID);
+			Cuenta destination = cuentaDAO.getByID(destinationID);
+
 			transfer.setId(movementID);
 			transfer.setDescription(newDescription);
 			transfer.setValue(newValue);
 			transfer.setDate(newDate);
 			transfer.setHour(newHour);
-			transfer.setSource(cuentaDAO.getByID(sourceID));
-			transfer.setDestination(cuentaDAO.getByID(destinationID));
+			transfer.setSource(source);
+			transfer.setDestination(destination);
 			transfer.setCategory(categoriaTransferenciaDAO.getByID(categoryID));
 
 			if (transfer.getSource() != transfer.getDestination()) {
-				flag = transferenciaDAO.updateTransfer(transfer);
+				source.setTotal(source.getTotal() - transfer.getValue() + movement.getValue());
+				if (source.getTotal() >= 0) {
+					destination.setTotal(destination.getTotal() + transfer.getValue() - movement.getValue());
+					flag = transferenciaDAO.updateTransfer(transfer) && cuentaDAO.update(source)
+							&& cuentaDAO.update(destination);
+				}else {
+					errorMessage = "El VALOR EXCEDE el dinero que hay en la cuenta " + source.getName();
+				}
+			}else {
+				errorMessage = "No se permiten Transferencias a la misma cuenta " + source.getName();
 			}
 		}
 
 		// 3. Llamar a la vista
 		if (flag) {
-			// req.getRequestDispatcher("jsp/verMovimientos.jsp").forward(req, resp);
 			resp.sendRedirect(
 					"ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
 		} else {
-			resp.sendRedirect(
-					"ContabilidadController?ruta=showDashboard&from=" + from.toString() + "&to" + to.toString());
+			errorMessage = "Se produjo un ERROR al MODIFICAR el Movimiento " + errorMessage;
+			req.setAttribute("from", from);
+			req.setAttribute("to", to);
+			req.setAttribute("errorMessage", errorMessage);
+
+			req.getRequestDispatcher("jsp/error.jsp").forward(req, resp);
 		}
 
 	}
@@ -349,6 +378,7 @@ public class ContabilidadController extends HttpServlet {
 		EgresoDAO egresoDAO = new EgresoDAO();
 		TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
 		MovimientoDAO movimientoDAO = new MovimientoDAO();
+		CuentaDAO cuentaDAO = new CuentaDAO();
 
 		// 1. Obtener los parametros
 		int movementID = Integer.parseInt(req.getParameter("movementID"));
@@ -360,32 +390,55 @@ public class ContabilidadController extends HttpServlet {
 				: req.getParameter("from"));
 
 		// 2. Hablar con los modelos
-		String urlRedirect = "ContabilidadController?ruta=showDashboard&from=" + from.toString() + "&to"
-				+ to.toString();
+		boolean flag = false;
+		String errorMessage = "";
 
 		Movimiento movement = movimientoDAO.getByID(movementID);
+		Cuenta source;
+		Cuenta destination;
+
 		if (movement instanceof Ingreso) {
-			if (ingresoDAO.deleteIncome(movementID)) {
-				urlRedirect = "ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to"
-						+ to.toString();
+			destination = ((Ingreso) movement).getDestination();
+			destination.setTotal(destination.getTotal() - movement.getValue());
+			if (destination.getTotal() >= 0) {
+				flag = ingresoDAO.deleteIncome(movementID) && cuentaDAO.update(destination);
+			}else {
+				errorMessage = "El VALOR EXCEDE el dinero que hay en la cuenta ";
 			}
 
 		} else if (movement instanceof Egreso) {
-			if (egresoDAO.deleteExpense(movementID)) {
-				urlRedirect = "ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to"
-						+ to.toString();
-			}
+			source = ((Egreso) movement).getSource();
+			source.setTotal(source.getTotal() + movement.getValue());
+
+			flag = egresoDAO.deleteExpense(movementID) && cuentaDAO.update(source);
 
 		} else if (movement instanceof Transferencia) {
-			if (transferenciaDAO.deleteTransfer(movementID)) {
-				urlRedirect = "ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to"
-						+ to.toString();
+			source = ((Transferencia) movement).getSource();
+			destination = ((Transferencia) movement).getDestination();
+
+			destination.setTotal(destination.getTotal() - movement.getValue());
+			source.setTotal(source.getTotal() + movement.getValue());
+
+			if (destination.getTotal() >= 0) {
+				flag = transferenciaDAO.deleteTransfer(movementID) && cuentaDAO.update(source)
+						&& cuentaDAO.update(destination);
+			}else {
+				errorMessage = "El VALOR EXCEDE el dinero que hay en la cuenta ";
 			}
 		}
 
 		// 3. Llamar a la vista
+		if (flag) {
+			resp.sendRedirect(
+					"ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
+		} else {
+			errorMessage = "El VALOR EXCEDE el dinero que hay en la cuenta " + errorMessage;
+			req.setAttribute("from", from);
+			req.setAttribute("to", to);
+			req.setAttribute("errorMessage", errorMessage);
 
-		resp.sendRedirect(urlRedirect);
+			req.getRequestDispatcher("jsp/error.jsp").forward(req, resp);
+		}
 	}
 
 	private void showCategories(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -406,7 +459,7 @@ public class ContabilidadController extends HttpServlet {
 				: req.getParameter("from"));
 
 		// 2. Hablar con los modelos
-		CategoriaTotalDTO category = categoriaDAO.getSummarizedByID(categoryID);
+		CategoriaTotalDTO category = categoriaDAO.getSummarizedByID(categoryID, from, to);
 
 		List<Movimiento> movements = new ArrayList<>();
 		List<Ingreso> incomeMovements = ingresoDAO.getAllByCategory(categoryID);
@@ -442,6 +495,7 @@ public class ContabilidadController extends HttpServlet {
 		LocalDate from = LocalDate.parse((req.getParameter("from") == null)
 				? LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth().getValue(), 1).toString()
 				: req.getParameter("from"));
+		
 		// 2. Hablar con los modelos
 		Cuenta account = cuentaDAO.getByID(accountID);
 		List<Cuenta> accounts = cuentaDAO.getAll();
@@ -477,6 +531,7 @@ public class ContabilidadController extends HttpServlet {
 				? LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth().getValue(), 1).toString()
 				: req.getParameter("from"));
 		// 2. Hablar con los modelos
+		boolean flag = false;
 		Cuenta destination = cuentaDAO.getByID(destinationID);
 		CategoriaIngreso category = categoriaIngresoDAO.getByID(categoryID);
 
@@ -488,13 +543,20 @@ public class ContabilidadController extends HttpServlet {
 		newIncome.setDestination(destination);
 		newIncome.setCategory(category);
 
-		ingresoDAO.newIncome(newIncome);
-
 		destination.setTotal(destination.getTotal() + newIncome.getValue());
 
-		cuentaDAO.update(destination);
+		flag = ingresoDAO.newIncome(newIncome) && cuentaDAO.update(destination);
 		// 3. Llamar a la vista
-		resp.sendRedirect("ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
+		if (flag) {
+			resp.sendRedirect(
+					"ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
+		} else {
+			req.setAttribute("from", from);
+			req.setAttribute("to", to);
+			req.setAttribute("errorMessage", "Se produjo un ERROR al realizar el INGRESO");
+
+			req.getRequestDispatcher("jsp/error.jsp").forward(req, resp);
+		}
 
 	}
 
@@ -519,10 +581,10 @@ public class ContabilidadController extends HttpServlet {
 
 		// 3. Llamar a la vista
 		req.setAttribute("account", account);
-		req.setAttribute("from", from);
-		req.setAttribute("to", to);
 		req.setAttribute("accounts", accounts);
 		req.setAttribute("categories", categories);
+		req.setAttribute("from", from);
+		req.setAttribute("to", to);
 
 		req.getRequestDispatcher("jsp/verEgreso.jsp").forward(req, resp);
 
@@ -548,6 +610,9 @@ public class ContabilidadController extends HttpServlet {
 				? LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth().getValue(), 1).toString()
 				: req.getParameter("from"));
 		// 2. Hablar con los modelos
+		boolean flag = false;
+		String errorMessage = "";
+		
 		Cuenta source = cuentaDAO.getByID(sourceID);
 		CategoriaEgreso category = categoriaEgresoDAO.getByID(categoryID);
 
@@ -560,15 +625,25 @@ public class ContabilidadController extends HttpServlet {
 		newExpense.setCategory(category);
 
 		source.setTotal(source.getTotal() - newExpense.getValue());
-		
-		if (source.getTotal() >= 0){
-			egresoDAO.newExpense(newExpense);
-			cuentaDAO.update(source);
+
+		if (source.getTotal() >= 0) {
+			flag = egresoDAO.newExpense(newExpense) && cuentaDAO.update(source);
+		} else {
+			errorMessage = "El VALOR EXCEDE el dinero que hay en la cuenta " + source.getName();
 		}
-		System.out.println("Valor excede el dinero en la cuenta");
 
 		// 3. Llamar a la vista
-		resp.sendRedirect("ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
+		if (flag) {
+			resp.sendRedirect(
+					"ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
+		} else {
+			errorMessage = "Se produjo un ERROR al realizar el EGRESO " + errorMessage;
+			req.setAttribute("from", from);
+			req.setAttribute("to", to);
+			req.setAttribute("errorMessage", errorMessage);
+
+			req.getRequestDispatcher("jsp/error.jsp").forward(req, resp);
+		}
 
 	}
 
@@ -622,6 +697,8 @@ public class ContabilidadController extends HttpServlet {
 				? LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth().getValue(), 1).toString()
 				: req.getParameter("from"));
 		// 2. Hablar con los modelos
+		boolean flag = false;
+		String errorMessage = "";
 		Cuenta source = cuentaDAO.getByID(sourceID);
 		Cuenta destination = cuentaDAO.getByID(destinationID);
 		CategoriaTransferencia category = categoriaTransferenciaDAO.getByID(categoryID);
@@ -634,24 +711,32 @@ public class ContabilidadController extends HttpServlet {
 		newTransfer.setSource(source);
 		newTransfer.setDestination(destination);
 		newTransfer.setCategory(category);
-		
+
 		if (newTransfer.getSource() != newTransfer.getDestination()) {
-			
+
 			destination.setTotal(destination.getTotal() + newTransfer.getValue());
 			source.setTotal(source.getTotal() - newTransfer.getValue());
-			
-			if (source.getTotal() >= 0){
-				transferenciaDAO.newTransfer(newTransfer);
-				
-				cuentaDAO.update(source);
-			}
-			System.out.println("Valor excede el dinero en la cuenta");
-		}
-		System.out.println("No puedes transferir dinero a la misma cuenta");
 
+			if (source.getTotal() >= 0) {
+				flag = transferenciaDAO.newTransfer(newTransfer) &&	cuentaDAO.update(source);
+			} else {
+				errorMessage = "El VALOR EXCEDE el dinero que hay en la cuenta " + source.getName();
+			}
+		} else {
+			errorMessage = "No se permiten Transferencias a la misma cuenta " + source.getName() ;
+		}
 
 		// 3. Llamar a la vista
-		resp.sendRedirect("ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
+		if (flag) {
+			resp.sendRedirect("ContabilidadController?ruta=showMovements&from=" + from.toString() + "&to" + to.toString());
+		} else {
+			errorMessage = "Se produjo un ERROR al realizar la TRANSFERENCIA " + errorMessage;
+			req.setAttribute("from", from);
+			req.setAttribute("to", to);
+			req.setAttribute("errorMessage", errorMessage);
+
+			req.getRequestDispatcher("jsp/error.jsp").forward(req, resp);
+		}
 	}
 
 }

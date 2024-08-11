@@ -5,115 +5,106 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import model.entidades.Egreso;
-import model.entidades.Ingreso;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Query;
 import model.entidades.Movimiento;
-import model.entidades.Transferencia;
 
 public class MovimientoDAO {
-	
+	private EntityManager em;
+
+	public MovimientoDAO() {
+		this.em = Persistence.createEntityManagerFactory("ContabilidadMySQL").createEntityManager();
+	}
+
 	public List<? extends Movimiento> getAll() {
-		Movimiento movimiento = new Movimiento();
-		IngresoDAO ingresoDAO = new IngresoDAO();
-		EgresoDAO egresoDAO = new EgresoDAO();
-		TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
-		
-		List<Movimiento> movements = movimiento.getMovements();
-		if (movements == null) {
-			movements = new ArrayList<>();
-			List<Ingreso> incomeMovements = ingresoDAO.getAll();
-			List<Egreso> expenseMovements = egresoDAO.getAll();
-			List<Transferencia> transferMovements = transferenciaDAO.getAll();
-
-			movements.addAll(incomeMovements);
-			movements.addAll(expenseMovements);
-			movements.addAll(transferMovements);
-		}
-
-		return movements;
+		String sentenciaJPQL = "SELECT m FROM Movimiento m";
+		Query query = this.em.createQuery(sentenciaJPQL);
+		return (List<Movimiento>) query.getResultList();
 	}
+
 	
-	public List<? extends Movimiento> getAllByDate(LocalDate from, LocalDate to) {
-		List<Movimiento> movementsByDate = new ArrayList<>();
-		LocalDate date;
-		for (Movimiento movement : getAll()) {
-			date = movement.getDate();
-			if ((date.isEqual(from) || date.isAfter(from)) && (date.isEqual(to) || date.isBefore(to))) {
-				movementsByDate.add(movement);
-				
-			}
-		}
-		
-		return sortMovementsByDate(movementsByDate);
-	}
-
 	public List<? extends Movimiento> getAllByAccount(int accountID) {
-		IngresoDAO ingresoDAO = new IngresoDAO();
-		EgresoDAO egresoDAO = new EgresoDAO();
-		TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
-		
-		List<Movimiento> movementsByAccount = new ArrayList<>();
-		
-		List<Ingreso> incomeMovements = ingresoDAO.getAllByAccount(accountID);
-		List<Egreso> expenseMovements = egresoDAO.getAllByAccount(accountID);
-		List<Transferencia> transferMovements = transferenciaDAO.getAllByAccount(accountID);
-		
-		movementsByAccount.addAll(incomeMovements);
-		movementsByAccount.addAll(expenseMovements);
-		movementsByAccount.addAll(transferMovements);
-		
+		String sentenciaJPQL = "SELECT m FROM Movimiento m WHERE (m.source.id = :accountID OR m.destination.id = :accountID)";
+		Query query = this.em.createQuery(sentenciaJPQL);
+		query.setParameter("accountID", accountID);
+		List<Movimiento> movementsByAccount = (List<Movimiento>) query.getResultList();
 		return sortMovementsByDate(movementsByAccount);
 	}
 
 	public List<? extends Movimiento> getAllByCategory(int categoryID) {
+		List<Movimiento> movementsByCategory = new ArrayList<>();
 		IngresoDAO ingresoDAO = new IngresoDAO();
 		EgresoDAO egresoDAO = new EgresoDAO();
 		TransferenciaDAO transferenciaDAO = new TransferenciaDAO();
 		
-		List<Movimiento> movementsByCategory = new ArrayList<>();
-		
-		List<Ingreso> incomeMovements = ingresoDAO.getAllByCategory(categoryID);
-		List<Egreso> expenseMovements = egresoDAO.getAllByCategory(categoryID);
-		List<Transferencia> transferMovements = transferenciaDAO.getAllByCategory(categoryID);
-		
-		movementsByCategory.addAll(incomeMovements);
-		movementsByCategory.addAll(expenseMovements);
-		movementsByCategory.addAll(transferMovements);
-		
+		movementsByCategory.addAll(ingresoDAO.getAllByCategory(categoryID));
+		movementsByCategory.addAll(egresoDAO.getAllByCategory(categoryID));
+		movementsByCategory.addAll(transferenciaDAO.getAllByCategory(categoryID));
+
 		return sortMovementsByDate(movementsByCategory);
+		/*
+		String sentenciaJPQL = "SELECT m FROM Movimiento m WHERE m.category.id = :categoryID";
+		Query query = this.em.createQuery(sentenciaJPQL);
+		query.setParameter("categoryID", categoryID);
+		List<Movimiento> movementsByCategory = (List<Movimiento>) query.getResultList();
+		return sortMovementsByDate(movementsByCategory);*/
 	}
 
 	public Movimiento getByID(int movementID) {
-		for (Movimiento movimiento : getAll()) {
-			if(movimiento.getId() == movementID) {
-				return movimiento;
+		return this.em.find(Movimiento.class, movementID);
+	}
+
+	public boolean updateMovement(Movimiento movement) {
+		try {
+			this.em.getTransaction().begin();
+			Movimiento existingMovement = this.em.find(Movimiento.class, movement.getId());
+			if (existingMovement != null) {
+				existingMovement.setDescription(movement.getDescription());
+				existingMovement.setValue(movement.getValue());
+				existingMovement.setDate(movement.getDate());
+				existingMovement.setHour(movement.getHour());
+				this.em.getTransaction().commit();
+				return true;
 			}
+			this.em.getTransaction().rollback();
+			return false;
+		} catch (Exception e) {
+			if (this.em.getTransaction().isActive()) {
+				this.em.getTransaction().rollback();
+			}
+			e.printStackTrace();
+			return false;
 		}
-		return null;
 	}
-	
-	public void updateMovement(Movimiento movement) {
-		Movimiento movementUpdated = getByID(movement.getId());
-		movementUpdated.setDescription(movement.getDescription());
-		movementUpdated.setValue(movement.getValue());
-		movementUpdated.setDate(movement.getDate());
-		movementUpdated.setHour(movement.getHour());
+
+	public boolean deleteMovement(int movementID) {
+		try {
+			this.em.getTransaction().begin();
+			Movimiento movement = this.em.find(Movimiento.class, movementID);
+			if (movement != null) {
+				this.em.remove(movement);
+				this.em.getTransaction().commit();
+				return true;
+			}
+			this.em.getTransaction().rollback();
+			return false;
+		} catch (Exception e) {
+			if (this.em.getTransaction().isActive()) {
+				this.em.getTransaction().rollback();
+			}
+			e.printStackTrace();
+			return false;
+		}
 	}
-	
-	public void deleteMovement(Movimiento movement) {
-		Movimiento movimiento = new Movimiento();
-		
-		List<Movimiento> movements = movimiento.getMovements();
-		movements.remove(movement);
-	}
-	
-	/* Metodos que no estan en el diseño*/
-	public List<Movimiento> sortMovementsByDate(List<Movimiento> auxMovements){
+
+
+	public List<Movimiento> sortMovementsByDate(List<Movimiento> auxMovements) {
 		auxMovements.sort(Comparator.comparing(Movimiento::getDate).reversed());
 		return auxMovements;
 	}
-	
-	public List<Movimiento> filterMovementByDate(List<Movimiento> allMovements, LocalDate from, LocalDate to){
+
+	public List<Movimiento> filterMovementByDate(List<Movimiento> allMovements, LocalDate from, LocalDate to) {
 		List<Movimiento> filteredMovements = new ArrayList<>();
 		for (Movimiento movimiento : allMovements) {
 			LocalDate date = movimiento.getDate();

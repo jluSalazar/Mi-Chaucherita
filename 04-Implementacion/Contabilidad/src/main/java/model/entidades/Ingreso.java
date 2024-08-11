@@ -1,27 +1,26 @@
 package model.entidades;
 
 import java.io.Serializable;
-import java.util.List;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+
 
 @Entity
-@Table(name = "Ingreso")
+@DiscriminatorValue("INGRESO")
 public class Ingreso extends Movimiento implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne
+    @ManyToOne
     @JoinColumn(name = "destination_id")
-	private Cuenta destination;
-	@ManyToOne
-    @JoinColumn(name = "category_id")
-	private CategoriaIngreso category;
+    private Cuenta destination;
 
-	private List<Ingreso> incomeMovements;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoriaIngreso category;
 
 	public Ingreso() {
 	}
@@ -40,15 +39,6 @@ public class Ingreso extends Movimiento implements Serializable {
 
 	public void setCategory(CategoriaIngreso category) {
 		this.category = category;
-	}
-
-
-	public List<Ingreso> getIncomeMovements() {
-		return incomeMovements;
-	}
-
-	public void setIncomeMovements(List<Ingreso> incomeMovements) {
-		this.incomeMovements = incomeMovements;
 	}
 
 	public Cuenta getSource() {
