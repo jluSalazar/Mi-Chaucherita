@@ -37,7 +37,7 @@
 		<div class="account-details">
 			<!-- Información de la Cuenta -->
 			<div class="account-info">
-				<h2>Detalles de la Categoria</h2>
+				<h2>Detalles de la Categoría</h2>
 				<br> <br>
 				<p>
 					<strong>ID:</strong> ${category.id}
@@ -54,7 +54,7 @@
 
 			<!-- Tabla de Movimientos -->
 			<div class="account-movements">
-				<h2>Movimientos de la Categoria del periodo Actual</h2>
+				<h2>Movimientos de la Categoría del periodo Actual</h2>
 				<table>
 					<thead>
 						<tr>
@@ -65,7 +65,7 @@
 							<th>Cuenta de Destino</th>
 							<th>Fecha</th>
 							<th>Hora</th>
-							<th>Categoria</th>
+							<th>Categoría</th>
 							<th>Acciones</th>
 						</tr>
 					</thead>

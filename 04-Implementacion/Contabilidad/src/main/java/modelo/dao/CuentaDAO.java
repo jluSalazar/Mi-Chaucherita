@@ -5,11 +5,11 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
-import model.entidades.Cuenta;
-import model.entidades.Egreso;
-import model.entidades.Ingreso;
-import model.entidades.Movimiento;
-import model.entidades.Transferencia;
+import modelo.entidades.Cuenta;
+import modelo.entidades.Egreso;
+import modelo.entidades.Ingreso;
+import modelo.entidades.Movimiento;
+import modelo.entidades.Transferencia;
 
 public class CuentaDAO {
 	private EntityManager em;

@@ -60,7 +60,7 @@
 							<th>Cuenta de Destino</th>
 							<th>Fecha (aaaa/mm/dd)</th>
 							<th>Hora</th>
-							<th>Categoria</th>
+							<th>Categoría</th>
 							<th>Acciones</th>
 						</tr>
 					</thead>

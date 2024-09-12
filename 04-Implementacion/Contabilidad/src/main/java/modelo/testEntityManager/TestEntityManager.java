@@ -7,14 +7,6 @@ import java.util.List;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Persistence;
-import model.entidades.CategoriaEgreso;
-import model.entidades.CategoriaIngreso;
-import model.entidades.CategoriaTransferencia;
-import model.entidades.Cuenta;
-import model.entidades.Egreso;
-import model.entidades.Ingreso;
-import model.entidades.Movimiento;
-import model.entidades.Transferencia;
 import modelo.dao.CategoriaEgresoDAO;
 import modelo.dao.CategoriaIngresoDAO;
 import modelo.dao.CategoriaTransferenciaDAO;
@@ -23,6 +15,14 @@ import modelo.dao.EgresoDAO;
 import modelo.dao.IngresoDAO;
 import modelo.dao.MovimientoDAO;
 import modelo.dao.TransferenciaDAO;
+import modelo.entidades.CategoriaEgreso;
+import modelo.entidades.CategoriaIngreso;
+import modelo.entidades.CategoriaTransferencia;
+import modelo.entidades.Cuenta;
+import modelo.entidades.Egreso;
+import modelo.entidades.Ingreso;
+import modelo.entidades.Movimiento;
+import modelo.entidades.Transferencia;
 
 public class TestEntityManager {
 

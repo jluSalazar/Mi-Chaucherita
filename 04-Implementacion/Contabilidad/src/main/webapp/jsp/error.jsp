@@ -18,9 +18,11 @@
 	<main>
 		<div class="error-details">
 			<h1>Error</h1>
+			<br>
 			<p>
 				<c:out value="${errorMessage}" />
 			</p>
+			<br>
 			<a class="error-button" href="ContabilidadController?ruta=showDashboard&from=${from.toString()}&to=${to.toString()}">
 				Volver a la página principal 
 			</a>
