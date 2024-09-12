@@ -7,10 +7,10 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
-import model.entidades.Categoria;
-import model.entidades.CategoriaTotalDTO;
-import model.entidades.Cuenta;
-import model.entidades.Movimiento;
+import modelo.entidades.Categoria;
+import modelo.entidades.CategoriaTotalDTO;
+import modelo.entidades.Cuenta;
+import modelo.entidades.Movimiento;
 
 public class CategoriaDAO {
 	

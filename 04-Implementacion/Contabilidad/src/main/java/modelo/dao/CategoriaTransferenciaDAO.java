@@ -5,7 +5,7 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
-import model.entidades.CategoriaTransferencia;
+import modelo.entidades.CategoriaTransferencia;
 
 public class CategoriaTransferenciaDAO {
 	private EntityManager em;

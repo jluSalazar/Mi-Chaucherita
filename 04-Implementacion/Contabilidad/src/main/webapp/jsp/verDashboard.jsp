@@ -77,9 +77,9 @@
 			</div>
 			<div class="cat-mov">
 				<div class="categories">
-					<h2>Categorias</h2>
+					<h2>Categorías</h2>
 					<br>
-					<h3>Categorias de Ingreso</h3>
+					<h3>Categorías de Ingreso</h3>
 					<div class="card-container">
 
 						<c:forEach items="${incomeCategories}" var="incomeCategory">
@@ -99,7 +99,7 @@
 							</div>
 						</c:forEach>
 					</div>
-					<h3>Categorias de Egreso</h3>
+					<h3>Categorías de Egreso</h3>
 					<div class="card-container">
 
 						<c:forEach items="${expenseCategories}" var="expenseCategory">
@@ -142,7 +142,7 @@
 								<th>Cuenta de Destino</th>
 								<th>Fecha (aaaa/mm/dd)</th>
 								<th>Hora</th>
-								<th>Categoria</th>
+								<th>Categoría</th>
 								<th>Acciones</th>
 							</tr>
 						</thead>

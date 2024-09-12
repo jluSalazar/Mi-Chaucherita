@@ -6,15 +6,15 @@
 	
 	<persistence-unit name="ContabilidadMySQL" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>model.entidades.Cuenta</class>
-		<class>model.entidades.Categoria</class>
-		<class>model.entidades.CategoriaEgreso</class>
-		<class>model.entidades.CategoriaIngreso</class>
-		<class>model.entidades.CategoriaTransferencia</class>
-		<class>model.entidades.Egreso</class>
-		<class>model.entidades.Ingreso</class>
-		<class>model.entidades.Movimiento</class>
-		<class>model.entidades.Transferencia</class>
+		<class>modelo.entidades.Cuenta</class>
+		<class>modelo.entidades.Categoria</class>
+		<class>modelo.entidades.CategoriaEgreso</class>
+		<class>modelo.entidades.CategoriaIngreso</class>
+		<class>modelo.entidades.CategoriaTransferencia</class>
+		<class>modelo.entidades.Egreso</class>
+		<class>modelo.entidades.Ingreso</class>
+		<class>modelo.entidades.Movimiento</class>
+		<class>modelo.entidades.Transferencia</class>
 		<properties>
 			<property name="jakarta.persistence.jdbc.url"
 				value="jdbc:mysql://localhost:8889/contabilidad" />

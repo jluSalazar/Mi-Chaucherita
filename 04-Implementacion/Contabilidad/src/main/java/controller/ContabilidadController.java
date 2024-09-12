@@ -11,16 +11,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.entidades.Categoria;
-import model.entidades.CategoriaEgreso;
-import model.entidades.CategoriaIngreso;
-import model.entidades.CategoriaTotalDTO;
-import model.entidades.CategoriaTransferencia;
-import model.entidades.Cuenta;
-import model.entidades.Egreso;
-import model.entidades.Ingreso;
-import model.entidades.Movimiento;
-import model.entidades.Transferencia;
 import modelo.dao.CategoriaDAO;
 import modelo.dao.CategoriaEgresoDAO;
 import modelo.dao.CategoriaIngresoDAO;
@@ -30,6 +20,16 @@ import modelo.dao.EgresoDAO;
 import modelo.dao.IngresoDAO;
 import modelo.dao.MovimientoDAO;
 import modelo.dao.TransferenciaDAO;
+import modelo.entidades.Categoria;
+import modelo.entidades.CategoriaEgreso;
+import modelo.entidades.CategoriaIngreso;
+import modelo.entidades.CategoriaTotalDTO;
+import modelo.entidades.CategoriaTransferencia;
+import modelo.entidades.Cuenta;
+import modelo.entidades.Egreso;
+import modelo.entidades.Ingreso;
+import modelo.entidades.Movimiento;
+import modelo.entidades.Transferencia;
 
 @WebServlet("/ContabilidadController")
 public class ContabilidadController extends HttpServlet {

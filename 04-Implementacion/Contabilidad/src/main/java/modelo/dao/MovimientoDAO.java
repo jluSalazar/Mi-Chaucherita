@@ -8,7 +8,7 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
-import model.entidades.Movimiento;
+import modelo.entidades.Movimiento;
 
 public class MovimientoDAO {
 	private EntityManager em;

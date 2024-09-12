@@ -8,9 +8,9 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.Query;
-import model.entidades.Categoria;
-import model.entidades.Egreso;
-import model.entidades.Movimiento;
+import modelo.entidades.Categoria;
+import modelo.entidades.Egreso;
+import modelo.entidades.Movimiento;
 
 public class EgresoDAO {
 
